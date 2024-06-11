@@ -3,15 +3,25 @@
 namespace Duchuy\Php2\Controllers\Client;
 
 use Duchuy\Php2\Commons\Controller;
+use Duchuy\Php2\Commons\Helper;
+use Duchuy\Php2\Models\Product;
 
 class HomeController extends Controller
 {
+    private Product $product;
+
+    public function __construct()
+    {
+        $this->product = new Product();
+    }
+
     public function index()
     {
-        $name = 'NDH0104';
 
+        $products = $this->product->all();
+        // Helper::debug($products);
         $this->renderViewClient('home', [
-            'name' => $name
+            'products' => $products
         ]);
     }
 }

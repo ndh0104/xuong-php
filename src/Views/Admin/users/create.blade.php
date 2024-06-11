@@ -1,41 +1,62 @@
-<!DOCTYPE html>
-<html lang="en">
+@extends('layouts.master')
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Danh sách User</title>
+@section('title')
+Thêm mới người dùng
+@endsection
 
-    <!-- Latest compiled and minified CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+@section('content')
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="white_card card_height_100 mb_30">
+            <div class="white_card_header">
+                <div class="box_header m-0">
+                    <div class="main-title">
+                        <h3 class="m-0">Thêm mới người dùng</h3>
+                    </div>
+                </div>
+            </div>
+            <div class="white_card_body">
+                @if (!empty($_SESSION['errors']))
+                <div class="alert alert-warning">
+                    <ul>
+                        @foreach ($_SESSION['errors'] as $error)
+                        <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
 
-    <!-- Latest compiled JavaScript -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-</head>
-
-<body>
-    <h1>Thêm mới người dùng</h1>
-
-    <form action="{{ url('admin/users/store') }}" enctype="multipart/form-data" method="POST">
-        <div class="mb-3 mt-3">
-            <label for="name" class="form-label">Name:</label>
-            <input type="text" class="form-control" id="name" placeholder="Enter name" name="name">
+                    @php
+                    unset($_SESSION['errors']);
+                    @endphp
+                </div>
+                @endif
+                <form action="{{ url('admin/users/store') }}" method="POST" enctype="multipart/form-data">
+                    <div class="mb-3 row">
+                        <label for="inputHoten3" class="form-label col-sm-4 col-form-label">Họ tên</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="inputHoten3" placeholder="Name" name="name">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="inputEmail3" class="form-label col-sm-4 col-form-label">Email</label>
+                        <div class="col-sm-8">
+                            <input type="email" class="form-control" id="inputEmail3" placeholder="Email" name="email">
+                        </div>
+                    </div>
+                    <div class="mb-3 row">
+                        <label for="inputPassword3" class="form-label col-sm-4 col-form-label">Password</label>
+                        <div class="col-sm-8">
+                            <input type="password" class="form-control" id="inputPassword3" placeholder="Password"
+                                name="password">
+                        </div>
+                    </div>
+                    <div class=" row">
+                        <div class="col-sm-10">
+                            <button type="submit" class="btn btn-primary">Thêm mới</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
         </div>
-        <div class="mb-3 mt-3">
-            <label for="email" class="form-label">Email:</label>
-            <input type="email" class="form-control" id="email" placeholder="Enter email" name="email">
-        </div>
-        <div class="mb-3 mt-3">
-            <label for="avatar" class="form-label">Avatar:</label>
-            <input type="file" class="form-control" id="avatar" placeholder="Enter avatar" name="avatar">
-        </div>
-        <div class="mb-3 mt-3">
-            <label for="password" class="form-label">Password:</label>
-            <input type="text" class="form-control" id="password" placeholder="Enter password" name="password">
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
-</body>
-
-</html>
+    </div>
+</div>
+@endsection

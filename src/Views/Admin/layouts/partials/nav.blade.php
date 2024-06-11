@@ -14,14 +14,14 @@
                 <span>Dashboard</span>
             </a>
         </li>
-        <li class>
+        <!-- <li class>
             <a href="calender.html" aria-expanded="false">
                 <div class="icon_menu">
                     <img src="{{asset('assets/admin/img/menu-icon/7.svg') }}" alt>
                 </div>
                 <span>Calander</span>
             </a>
-        </li>
+        </li> -->
         <li class>
             <a class="has-arrow" href="#" aria-expanded="false">
                 <div class="icon_menu">
@@ -31,7 +31,7 @@
             </a>
             <ul>
                 <li><a href="{{url('admin/products')}}">Danh sách</a></li>
-                <li><a href="Product_Details.html">Thêm mới</a></li>
+                <li><a href="{{ url('admin/products/create') }}">Thêm mới</a></li>
             </ul>
         </li>
         <li class>
@@ -42,8 +42,8 @@
                 <span>Danh mục</span>
             </a>
             <ul>
-                <li><a href="wow_animation.html">Danh sách</a></li>
-                <li><a href="Scroll_Reveal.html">Thêm mới</a></li>
+                <li><a href="{{url('admin/categories')}}">Danh sách</a></li>
+                <li><a href="{{url('admin/categories/create')}}">Thêm mới</a></li>
             </ul>
         </li>
         <li class>
@@ -55,7 +55,7 @@
             </a>
             <ul>
                 <li><a href="{{url('admin/users')}}">Danh sách</a></li>
-                <li><a href="mail_box.html">Thêm mới</a></li>
+                <li><a href="{{url('admin/users/create')}}">Thêm mới</a></li>
             </ul>
         </li>
     </ul>

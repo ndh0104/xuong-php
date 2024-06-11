@@ -28,42 +28,156 @@ class UserController extends Controller
 
     public function create()
     {
-        echo __CLASS__ . '@' . __FUNCTION__;
+        $this->renderViewAdmin('users.create');
     }
 
     public function store()
     {
-        // Helper::debug($_FILES);
-        $validator = new validator;
-        $validation = $validator->make($_POST + $_FILES, [
-            'name'                  => 'required',
+        // Helper::debug($_POST);
+        $validator = new Validator;
+        $validation = $validator->make($_POST, [
+            'name'                  => 'required|max:50',
             'email'                 => 'required|email',
             'password'              => 'required|min:6',
-            'confirm_password'      => 'required|same:password',
-            'avatar'                => 'required|uploaded_file:0,500K,png,jpeg'
+            // 'confirm_password'      => 'required|same:password',
+            // 'avatar'                => 'uploaded_file:0,2M,png,jpg,jpeg',
         ]);
+        $validation->validate();
+
+        if ($validation->fails()) {
+            $_SESSION['errors'] = $validation->errors()->firstOfAll();
+
+            header('Location: ' . url('admin/users/create'));
+            exit;
+        } else {
+            $data = [
+                'name'     => $_POST['name'],
+                'email'    => $_POST['email'],
+                'password' => password_hash($_POST['password'], PASSWORD_DEFAULT),
+            ];
+
+            // if (isset($_FILES['avatar']) && $_FILES['avatar']['size'] > 0) {
+
+            //     $from = $_FILES['avatar']['tmp_name'];
+            //     $to = 'assets/uploads/' . time() . $_FILES['avatar']['name'];
+
+            //     if (move_uploaded_file($from, PATH_ROOT . $to)) {
+            //         $data['avatar'] = $to;
+            //     } else {
+            //         $_SESSION['errors']['avatar'] = 'Upload Không thành công';
+
+            //         header('Location: ' . url('admin/users/create'));
+            //         exit;
+            //     }
+            // }
+
+            $this->user->insert($data);
+
+            $_SESSION['status'] = true;
+            $_SESSION['msg'] = 'Thao tác thành công';
+
+            header('Location: ' . url('admin/users'));
+            exit;
+        }
     }
 
 
     public function show($id)
     {
-        $this->user->findByID($id);
-        echo __CLASS__ . '@' . __FUNCTION__ . ' - ID = ' . $id;
+        $user = $this->user->findByID($id);
+
+        $this->renderViewAdmin('users.show', [
+            'user' => $user
+        ]);
     }
 
     public function edit($id)
     {
-        echo __CLASS__ . '@' . __FUNCTION__ . ' - ID = ' . $id;
+        $user = $this->user->findByID($id);
+
+        $this->renderViewAdmin('users.edit', [
+            'user' => $user
+        ]);
     }
 
     public function update($id)
     {
-        echo __CLASS__ . '@' . __FUNCTION__ . ' - ID = ' . $id;
+        // Helper::debug($_POST);
+        $user = $this->user->findByID($id);
+        $validator = new Validator;
+        $validation = $validator->make($_POST + $_FILES, [
+            'name'                  => 'required|max:50',
+            'email'                 => 'required|email',
+            'password'              => 'min:6',
+            'avatar'                => 'uploaded_file:0,2M,png,jpg,jpeg',
+            'type' => 'required|in:admin,member',
+            'is_active' => 'required|in:0,1',
+
+        ]);
+        $validation->validate();
+
+        if ($validation->fails()) {
+            $_SESSION['errors'] = $validation->errors()->firstOfAll();
+
+            header('Location: ' . url("admin/users/{$user['id']}/edit"));
+            exit;
+        } else {
+            $data = [
+                'name'     => $_POST['name'],
+                'email'    => $_POST['email'],
+                'password' => !empty($_POST['password'])
+                    ? password_hash($_POST['password'], PASSWORD_DEFAULT) : $user['password'],
+                'type' => $_POST['type'],
+                'is_active' => $_POST['is_active'],
+            ];
+            $flagUpload = false;
+            if (isset($_FILES['avatar']) && $_FILES['avatar']['size'] > 0) {
+
+                $flagUpload = true;
+
+                $from = $_FILES['avatar']['tmp_name'];
+                $to = 'assets/uploads/' . time() . $_FILES['avatar']['name'];
+
+                if (move_uploaded_file($from, PATH_ROOT . $to)) {
+                    $data['avatar'] = $to;
+                } else {
+                    $_SESSION['errors']['avatar'] = 'Upload Không thành công';
+
+                    header('Location: ' . url("admin/users/{$user['id']}/edit"));
+                    exit;
+                }
+            }
+
+            $this->user->update($id, $data);
+
+            if (
+                $flagUpload
+                && $user['avatar']
+                && file_exists(PATH_ROOT . $user['avatar'])
+            ) {
+                unlink(PATH_ROOT . $user['avatar']);
+            }
+
+            $_SESSION['status'] = true;
+            $_SESSION['msg'] = 'Thao tác thành công';
+
+            header('Location: ' . url("admin/users/{$user['id']}/edit"));
+            exit;
+        }
     }
 
     public function delete($id)
     {
+        $user = $this->user->findByID($id);
+
         $this->user->delete($id);
+
+        if (
+            $user['avatar']
+            && file_exists(PATH_ROOT . $user['avatar'])
+        ) {
+            unlink(PATH_ROOT . $user['avatar']);
+        }
 
         header('Location: ' . url('admin/users'));
         exit();

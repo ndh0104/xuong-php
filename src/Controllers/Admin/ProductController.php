@@ -23,6 +23,7 @@ class ProductController extends Controller
     {
         $products = $this->product->all();
         // Helper::debug($products);
+        // [$products, $totalpage] = $this->product->paginate();
         $this->renderViewAdmin('products.index', [
             'products' => $products
         ]);
@@ -42,13 +43,14 @@ class ProductController extends Controller
     public function store()
     {
         // VALIDATE
+        // Helper::debug($_POST + $_FILES);
         $validator = new Validator;
         $validation = $validator->make($_POST + $_FILES, [
             'category_id'           => 'required',
             'name'                  => 'required|max:100',
-            'overview'              => 'max:500',
-            'content'               => 'max:65000',
-            'img_thumbnail'         => 'uploaded_file:0,2048K,png,jpeg,jpg',
+            'price_regular'         => 'required|max:100',
+            'content'               => 'required|max:65000',
+            'img_thumbnail'         => 'required|uploaded_file:0,2048K,png,jpeg,jpg',
         ]);
         $validation->validate();
 
@@ -61,7 +63,7 @@ class ProductController extends Controller
             $data = [
                 'category_id'   => $_POST['category_id'],
                 'name'          => $_POST['name'],
-                'overview'      => $_POST['overview'],
+                'price_regular' => $_POST['price_regular'],
                 'content'       => $_POST['content'],
             ];
 
@@ -121,7 +123,7 @@ class ProductController extends Controller
         $validation = $validator->make($_POST + $_FILES, [
             'category_id'           => 'required',
             'name'                  => 'required|max:100',
-            'overview'              => 'max:500',
+            'price_regular'         => 'required|max:100',
             'content'               => 'max:65000',
             'img_thumbnail'         => 'uploaded_file:0,2048K,png,jpeg,jpg',
         ]);
@@ -136,7 +138,7 @@ class ProductController extends Controller
             $data = [
                 'category_id'   => $_POST['category_id'],
                 'name'          => $_POST['name'],
-                'overview'      => $_POST['overview'],
+                'price_regular' => $_POST['price_regular'],
                 'content'       => $_POST['content'],
                 'updated_at'    => date('Y-m-d H:i:s')
             ];
